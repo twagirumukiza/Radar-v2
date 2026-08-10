@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>RADAR — by twagirumukiza</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header><div><h1>RADAR</h1><p>Détecte la cible avant qu'elle disparaisse.</p></div>
+  <button id="sound" class="icon">🔊</button></header>
+
+  <section id="home" class="panel">
+    <div class="scope mini"><div class="sweep"><div class="sweep-trail"></div><div class="sweep-flame"></div><div class="sweep-line"></div></div><i></i><i></i><i></i></div>
+    <h2>MISSION DE DÉTECTION</h2>
+    <p>Le balayage révèle brièvement des échos. Touche uniquement la <b>cible rouge</b>. Les verts sont des leurres.</p>
+    <div class="row">
+      <label>Difficulté<select id="difficulty"><option value="easy">Facile</option><option value="normal" selected>Normal</option><option value="hard">Difficile</option></select></label>
+    </div>
+    <button id="start" class="primary">LANCER LE RADAR</button>
+  </section>
+
+  <section id="game" hidden>
+    <div class="hud"><span>NIVEAU <b id="level">1</b></span><span>SCORE <b id="score">0</b></span><span>VIES <b id="lives">♥♥♥</b></span><span>TEMPS <b id="time">30</b></span></div>
+    <div id="radar" class="scope">
+      <div class="grid"></div><div class="rings"></div><div id="sweep" class="sweep"><div class="sweep-trail"></div><div class="sweep-flame"></div><div class="sweep-line"></div></div>
+      <div class="cross x"></div><div class="cross y"></div><div class="center"></div>
+      <div id="contacts"></div>
+    </div>
+    <p id="status">SCAN EN COURS…</p>
+    <button id="quit">QUITTER</button>
+  </section>
+
+  <dialog id="over"><h2>MISSION TERMINÉE</h2><p>Score : <b id="finalScore"></b><br>Niveau : <b id="finalLevel"></b></p><div class="actions"><button id="again" class="primary">REJOUER</button><button id="back">ACCUEIL</button></div></dialog>
+</main>
+<footer>by twagirumukiza</footer>
+<script src="script.js"></script>
+</body></html>
