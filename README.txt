@@ -1,3 +1,9 @@
-RADAR V1.3 — by twagirumukiza
-Correction : le faisceau de balayage est maintenant physiquement ancré au point central du radar et tourne à 360° autour de ce point.
-Le son de balayage et les sons de jeu sont conservés.
+RADAR V1.4 — by twagirumukiza
+Balayage refait selon la référence :
+- pointe du faisceau exactement au centre ;
+- secteur/éventail lumineux jusqu'au bord ;
+- bord avant lumineux ;
+- traînée verte translucide en dégradé ;
+- rotation 360° ;
+- grille et cercles fixes ;
+- sons conservés.
