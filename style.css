@@ -1,0 +1,207 @@
+:root{
+  --g:#65ff32;--g2:#caffb7;--bg:#030b05;--panel:#08160b;--red:#ff3d45;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;
+  background:radial-gradient(circle at 50% 28%,#102916,#020603 72%);
+  color:#baff9c;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+main{width:min(94vw,760px);margin:auto;padding:22px 0 50px}
+header{display:flex;justify-content:space-between;align-items:center}
+h1{
+  color:var(--g);letter-spacing:.28em;margin:0;
+  font-size:clamp(26px,7vw,44px);
+  text-shadow:0 0 15px #4cff3b
+}
+header p{opacity:.65;margin:.4rem 0 1rem}
+.panel{
+  border:1px solid #267b2b;background:#071209dd;border-radius:18px;
+  padding:25px;text-align:center;box-shadow:0 0 35px #00ff3320
+}
+.primary,button,select{
+  font:inherit;color:#baff9c;background:#07150a;border:1px solid #3fd63e;
+  border-radius:9px;padding:12px 18px
+}
+.primary{background:#1a5c1e;color:white;box-shadow:0 0 15px #48ff4540}
+button{cursor:pointer}.row{margin:20px}.row label{display:grid;gap:8px}
+.hud{
+  display:flex;justify-content:space-between;gap:5px;
+  font-size:clamp(10px,2.5vw,14px);margin:8px 2px
+}
+
+/* RADAR */
+.scope{
+  position:relative;width:min(92vw,680px);aspect-ratio:1;
+  border:2px solid var(--g);border-radius:50%;overflow:hidden;margin:auto;
+  background:#031308;
+  box-shadow:inset 0 0 45px #1eff2830,0 0 25px #1eff2820
+}
+.scope.mini{width:210px;margin:0 auto 22px}
+.grid{
+  position:absolute;inset:0;z-index:0;
+  background-image:
+    linear-gradient(#31b63b33 1px,transparent 1px),
+    linear-gradient(90deg,#31b63b33 1px,transparent 1px);
+  background-size:8.33% 8.33%
+}
+.rings{
+  position:absolute;inset:12.5%;z-index:1;
+  border:1px solid #60ff47;border-radius:50%
+}
+.rings:before,.rings:after{
+  content:"";position:absolute;border:1px solid #60ff47;border-radius:50%;inset:16.66%
+}
+.rings:after{inset:33.33%}
+.cross{position:absolute;z-index:3;background:#4cff4255;pointer-events:none}
+.cross.x{height:1px;width:100%;top:50%}
+.cross.y{width:1px;height:100%;left:50%}
+.center{
+  position:absolute;z-index:6;left:50%;top:50%;width:10px;height:10px;
+  transform:translate(-50%,-50%);border-radius:50%;background:var(--g);
+  box-shadow:0 0 12px var(--g)
+}
+
+/*
+ V2 SWEEP
+ - outer container rotates clockwise
+ - bright line runs ONLY from center to edge
+ - trail is entirely BEHIND the line (counter-clockwise side)
+ - flame layer breathes slowly for a living, fluid trail
+*/
+.sweep{
+  position:absolute;inset:0;z-index:2;border-radius:50%;
+  transform-origin:50% 50%;
+  animation:radarScan 4s linear infinite;
+  pointer-events:none;
+}
+.sweep-trail,.sweep-flame{
+  position:absolute;inset:0;border-radius:50%;
+}
+
+/* Main translucent wake: 300° -> 360°, immediately behind the leading edge at 0°. */
+.sweep-trail{
+  background:
+    conic-gradient(
+      from 0deg at 50% 50%,
+      transparent 0deg 300deg,
+      rgba(55,210,35,.015) 300deg,
+      rgba(62,225,38,.055) 312deg,
+      rgba(72,240,42,.13) 326deg,
+      rgba(82,250,45,.25) 340deg,
+      rgba(96,255,48,.46) 352deg,
+      rgba(125,255,74,.72) 359deg,
+      transparent 360deg
+    );
+  filter:blur(.3px);
+}
+
+/* Slow flame-like secondary wake. It subtly swells and shifts behind the beam. */
+.sweep-flame{
+  background:
+    radial-gradient(ellipse at 42% 18%,rgba(125,255,65,.14),transparent 18%),
+    radial-gradient(ellipse at 34% 28%,rgba(95,255,48,.11),transparent 21%),
+    conic-gradient(
+      from 0deg at 50% 50%,
+      transparent 0deg 314deg,
+      rgba(72,235,35,.03) 314deg,
+      rgba(87,255,43,.16) 333deg,
+      rgba(110,255,58,.34) 350deg,
+      rgba(160,255,105,.52) 358.5deg,
+      transparent 360deg
+    );
+  opacity:.72;
+  transform-origin:50% 50%;
+  filter:blur(4px);
+  animation:flameBreath 2.7s ease-in-out infinite alternate;
+}
+
+/* Leading edge: CENTER -> BORDER only. It never crosses the radar. */
+.sweep-line{
+  position:absolute;
+  left:50%;top:0;
+  width:3px;height:50%;
+  transform:translateX(-50%);
+  transform-origin:50% 100%;
+  background:linear-gradient(to bottom,#8cff58 0%,#cfffbd 52%,#f1ffe9 100%);
+  box-shadow:
+    0 0 5px #6cff38,
+    0 0 11px rgba(101,255,50,.92),
+    0 0 20px rgba(101,255,50,.45);
+}
+.sweep-line::after{
+  content:"";position:absolute;left:50%;bottom:-4px;
+  width:8px;height:8px;transform:translateX(-50%);
+  border-radius:50%;background:#dfffd2;
+  box-shadow:0 0 11px #65ff32
+}
+
+@keyframes radarScan{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+@keyframes flameBreath{
+  0%{opacity:.46;filter:blur(5px);transform:rotate(-1.6deg) scale(.995)}
+  45%{opacity:.82;filter:blur(2.8px);transform:rotate(.6deg) scale(1.012)}
+  100%{opacity:.58;filter:blur(4.5px);transform:rotate(-.7deg) scale(1.004)}
+}
+
+/* CONTACTS */
+#contacts{position:absolute;inset:0;z-index:5}
+.contact{
+  position:absolute;width:24px;height:24px;transform:translate(-50%,-50%);
+  border-radius:50%;border:0;padding:0;background:#4dff49;
+  box-shadow:0 0 14px #4dff49;animation:pulse .7s infinite alternate
+}
+.contact.target{background:var(--red);box-shadow:0 0 18px var(--red)}
+@keyframes pulse{to{opacity:.55;transform:translate(-50%,-50%) scale(.75)}}
+
+#status{text-align:center;letter-spacing:.15em;height:22px}
+#quit{display:block;margin:10px auto}
+.actions{display:flex;gap:10px;justify-content:center}
+dialog{
+  color:#baff9c;background:#061008;border:1px solid #54ff43;border-radius:16px;
+  text-align:center;box-shadow:0 0 60px #32ff3750
+}
+dialog::backdrop{background:#000b}
+footer{text-align:center;opacity:.45;padding:15px}.icon{padding:8px 11px}
+@media(max-height:600px) and (orientation:landscape){
+  .scope{width:min(70vh,580px)}main{padding-top:8px}.hud{margin:2px}
+}
+
+/* V3 — menaces convergentes */
+.enemy{
+ position:absolute;width:22px;height:22px;transform:translate(-50%,-50%);
+ border:1px solid #ff8a8f;border-radius:50%;padding:0;z-index:7;
+ background:radial-gradient(circle at 38% 35%,#ffd0d2 0 8%,#ff424a 24%,#a60009 68%,#3b0004 100%);
+ box-shadow:0 0 7px #ff3038,0 0 17px rgba(255,45,55,.7);
+ cursor:crosshair;
+}
+.enemy::after{
+ content:"";position:absolute;inset:-7px;border:1px solid rgba(255,70,75,.45);
+ border-radius:50%;animation:enemyPulse .8s ease-out infinite;
+}
+.enemy.hit{animation:enemyBoom .18s ease-out forwards}
+@keyframes enemyPulse{from{transform:scale(.65);opacity:.9}to{transform:scale(1.45);opacity:0}}
+@keyframes enemyBoom{to{transform:translate(-50%,-50%) scale(2.2);opacity:0}}
+.scope.danger{animation:dangerFlash .25s ease-out}
+@keyframes dangerFlash{50%{box-shadow:inset 0 0 75px rgba(255,35,45,.65),0 0 35px rgba(255,35,45,.5)}}
+.level-banner{
+ position:absolute;z-index:20;left:50%;top:50%;transform:translate(-50%,-50%);
+ color:#d9ffc9;font-size:clamp(22px,6vw,42px);letter-spacing:.18em;text-align:center;
+ text-shadow:0 0 15px #65ff32;pointer-events:none;opacity:0
+}
+.level-banner.show{animation:levelShow 1.5s ease}
+@keyframes levelShow{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}25%,65%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0}}
+
+/* V3.1 — niveaux avancés : furtivité hors de la traînée */
+.enemy.scan-hidden{
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .09s linear;
+}
+.enemy.scan-visible{
+  opacity:1;
+  pointer-events:auto;
+  transition:opacity .06s linear;
+}
